@@ -94,9 +94,9 @@
             background: rgba(0, 243, 255, 0.05);
             border: 1px solid rgba(0, 243, 255, 0.3);
             color: var(--cyber-primary);
-            font-family: 'Chakra Petch', sans-serif;
+            font-family: 'IBM Plex Sans Arabic', sans-serif; /* تعريب الخط */
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0; /* تقليل المسافات للعربية */
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
@@ -168,11 +168,11 @@
         <div class="flex items-center gap-3">
             <div class="w-3 h-3 bg-teal-400 rounded-sm animate-pulse shadow-[0_0_10px_#2dd4bf]"></div>
             <div class="flex flex-col">
-                <span class="text-[10px] text-teal-400 tracking-[0.2em] uppercase font-bold">System Online</span>
-                <span class="text-[9px] text-white/40">V3.0.1 Stable</span>
+                <span class="text-[10px] text-teal-400 tracking-[0.1em] uppercase font-bold">النظام متصل</span>
+                <span class="text-[9px] text-white/40">نسخة 3.0.1 مستقرة</span>
             </div>
         </div>
-        <div class="text-[10px] text-white/40 font-mono" id="realTimeClock">00:00</div>
+        <div class="text-[12px] text-white/40 font-mono" id="realTimeClock">00:00</div>
     </header>
 
     <!-- 2. الوسط (المؤقت) -->
@@ -193,7 +193,7 @@
             <!-- الوقت -->
             <div class="z-10 text-center cursor-pointer select-none" onclick="app.toggle()">
                 <div id="timerDisplay" class="tech-nums text-7xl font-bold text-white transition-colors duration-300">25:00</div>
-                <div id="statusLabel" class="text-xs text-white/50 mt-4 tracking-[0.3em] uppercase">Ready</div>
+                <div id="statusLabel" class="text-xs text-white/50 mt-4 tracking-[0.1em] uppercase">جاهز للبدء</div>
             </div>
         </div>
 
@@ -214,13 +214,13 @@
 
         <!-- زر التشغيل الرئيسي -->
         <button onclick="app.toggle()" id="mainBtn" class="cyber-btn w-full py-5 text-xl font-bold tracking-widest flex items-center justify-center gap-3 group">
-            <span class="group-hover:animate-pulse">START_SESSION</span>
+            <span class="group-hover:animate-pulse">بدء_الجلسة</span>
             <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
         </button>
 
         <!-- إعادة الضبط -->
         <button onclick="app.reset()" class="text-[10px] text-white/30 hover:text-white/80 uppercase tracking-widest text-center transition-colors">
-            // Reset System
+            // إعادة_ضبط_النظام
         </button>
 
     </footer>
@@ -230,7 +230,7 @@
         <div class="cyber-modal p-8 w-80 text-center relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
             
-            <h2 class="text-3xl font-bold text-white mb-2 font-mono">MISSION COMPLETE</h2>
+            <h2 class="text-3xl font-bold text-white mb-2 font-mono">اكتملت المهمة</h2>
             <p class="text-cyan-400/70 text-sm mb-8 tracking-wider">تم إنجاز جلسة التركيز بنجاح</p>
             
             <button onclick="app.reset()" class="cyber-btn w-full py-3 font-bold">بدء مهمة جديدة</button>
@@ -243,11 +243,11 @@
             <h3 class="text-white/60 mb-8 tracking-widest text-sm uppercase">أدخل مدة المهمة</h3>
             <div class="flex items-center justify-center gap-2 mb-10">
                 <input type="number" id="customInput" class="cyber-input text-6xl w-32" placeholder="00">
-                <span class="text-white/30 text-xl font-mono">MIN</span>
+                <span class="text-white/30 text-lg">دقيقة</span>
             </div>
             <div class="flex gap-4">
-                <button onclick="app.confirmCustom()" class="cyber-btn flex-1 py-3 font-bold">CONFIRM</button>
-                <button onclick="app.closeCustom()" class="cyber-btn cyber-btn-secondary flex-1 py-3">CANCEL</button>
+                <button onclick="app.confirmCustom()" class="cyber-btn flex-1 py-3 font-bold">تأكيد</button>
+                <button onclick="app.closeCustom()" class="cyber-btn cyber-btn-secondary flex-1 py-3">إلغاء</button>
             </div>
         </div>
     </div>
@@ -282,7 +282,8 @@
             initClock() {
                 setInterval(() => {
                     const now = new Date();
-                    this.el.clock.innerText = now.toLocaleTimeString('en-US', {hour12: false, hour:'2-digit', minute:'2-digit'});
+                    // استخدام تنسيق الوقت العربي
+                    this.el.clock.innerText = now.toLocaleTimeString('ar-EG', {hour12: false, hour:'2-digit', minute:'2-digit'});
                 }, 1000);
             }
 
@@ -295,7 +296,7 @@
                 if (this.timeLeft <= 0) return;
                 this.isActive = true;
                 this.el.body.classList.add('focus-active');
-                this.el.status.innerText = "Target Locked";
+                this.el.status.innerText = "تم قفل الهدف";
                 this.el.status.classList.add('text-red-500', 'animate-pulse');
                 this.el.status.classList.remove('text-white/50');
                 
@@ -309,7 +310,7 @@
                 this.isActive = false;
                 clearInterval(this.interval);
                 this.el.body.classList.remove('focus-active');
-                this.el.status.innerText = "System Paused";
+                this.el.status.innerText = "النظام متوقف مؤقتًا";
                 this.el.status.classList.remove('text-red-500', 'animate-pulse');
                 
                 // استعادة اللون السماوي
@@ -341,14 +342,14 @@
                 this.duration = mins * 60;
                 this.timeLeft = this.duration;
                 this.updateView();
-                this.el.status.innerText = "Ready";
+                this.el.status.innerText = "جاهز";
             }
 
             reset() {
                 this.pause();
                 this.timeLeft = this.duration;
                 this.updateView();
-                this.el.status.innerText = "System Ready";
+                this.el.status.innerText = "النظام جاهز";
                 this.el.finishModal.style.opacity = '0';
                 this.el.finishModal.style.pointerEvents = 'none';
             }

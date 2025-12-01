@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Focus Flow | تدفق التركيز</title>
+    
+    <!-- خطوط عربية وأرقام عصرية -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;400;500;800&family=Outfit:wght@100;300;500&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        :root {
+            --primary-bg: #000000;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-surface: rgba(20, 20, 20, 0.4);
+            --glass-highlight: rgba(255, 255, 255, 0.03);
+            --neon-accent: #a78bfa;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.4);
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* --- خلفية الأورورا الحية --- */
+        .aurora-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            animation: float 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 0;
+        }
+        .blob-1 { background: #4c1d95; width: 300px; height: 300px; top: -10%; left: -10%; animation-delay: 0s; }
+        .blob-2 { background: #be185d; width: 400px; height: 400px; bottom: -10%; right: -10%; animation-delay: -5s; }
+        .blob-3 { background: #0f766e; width: 250px; height: 250px; top: 40%; left: 40%; animation-delay: -2s; opacity: 0.4; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(20px, 40px) scale(1.1); }
+        }
+
+        /* --- ضجيج بصري خفيف للواقعية (Noise Texture) --- */
+        .noise-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            opacity: 0.07;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* --- الكرت الزجاجي الرئيسي --- */
+        .glass-card {
+            width: 100%;
+            height: 100%;
+            max-width: 450px;
+            max-height: 850px; /* لشاشات الكمبيوتر */
+            background: var(--glass-surface);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.5s ease;
+        }
+
+        @media (min-width: 768px) {
+            .glass-card {
+                height: 90vh;
+                border-radius: 48px;
+            }
+        }
+
+        /* --- التايبوغرافيا الرقمية --- */
+        .timer-font {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 100; /* نحيف جداً */
+            letter-spacing: -2px;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            background: linear-gradient(180deg, #fff, rgba(255,255,255,0.7));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.3));
+        }
+
+        /* --- أزرار التحكم النيومورفيزم الزجاجي --- */
+        .control-btn {
+            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+        }
+        .control-btn:active {
+            transform: scale(0.92);
+            background: rgba(255,255,255,0.05);
+        }
+        .play-btn {
+            box-shadow: 0 0 30px rgba(167, 139, 250, 0.2);
+            border: 1px solid rgba(167, 139, 250, 0.4);
+        }
+        
+        /* --- وضع الزن (إخفاء العناصر) --- */
+        .zen-mode .hide-in-zen {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+        }
+        .zen-mode .scale-in-zen {
+            transform: scale(1.1);
+        }
+        .transition-ui {
+            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* --- دائرة التقدم --- */
+        .progress-circle {
+            transition: stroke-dashoffset 1s linear;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        
+        /* Custom Input Styles */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- الخلفية الحية -->
+    <div class="aurora-blob blob-1"></div>
+    <div class="aurora-blob blob-2"></div>
+    <div class="aurora-blob blob-3"></div>
+    <div class="noise-overlay"></div>
+
+    <!-- واجهة التطبيق -->
+    <main class="glass-card transition-ui" id="appInterface">
+        
+        <!-- الرأس: الشعار والوضع (تمت إزالة زر الثيم) -->
+        <header class="p-8 flex justify-between items-center hide-in-zen transition-ui">
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                <span class="text-xs font-bold tracking-[0.2em] text-white/50 uppercase">Offline Mode</span>
+            </div>
+            <!-- تم إزالة زر تغيير الثيم -->
+        </header>
+
+        <!-- المنطقة الوسطى: المؤقت -->
+        <section class="flex-1 flex flex-col items-center justify-center relative scale-in-zen transition-ui">
+            
+            <!-- حاوية الساعة والدائرة -->
+            <div class="relative w-[320px] h-[320px] flex items-center justify-center">
+                
+                <!-- دائرة الخلفية والخلفية المتوهجة -->
+                <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-purple-500/10 to-blue-500/5 blur-3xl"></div>
+                
+                <svg class="w-full h-full absolute top-0 left-0 drop-shadow-[0_0_15px_rgba(167,139,250,0.3)]">
+                    <circle cx="50%" cy="50%" r="48%" stroke="rgba(255,255,255,0.05)" stroke-width="2" fill="none" />
+                    <circle id="progressCircle" cx="50%" cy="50%" r="48%" stroke="url(#gradientStroke)" stroke-width="3" fill="none" 
+                            stroke-dasharray="1000" stroke-dashoffset="0" stroke-linecap="round" class="progress-circle" />
+                    
+                    <defs>
+                        <linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#c084fc" />
+                            <stop offset="100%" stop-color="#60a5fa" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+
+                <!-- الوقت -->
+                <div class="flex flex-col items-center z-10">
+                    <div id="timerDisplay" class="timer-font text-8xl md:text-9xl cursor-pointer" onclick="timerApp.toggleTimer()">25:00</div>
+                    <div id="statusText" class="text-white/40 text-sm font-medium tracking-widest mt-2 uppercase transition-opacity duration-500">جاهز للتركيز</div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- التحكم السفلي -->
+        <footer class="p-8 pb-12 transition-ui hide-in-zen">
+            
+            <!-- أزرار المدة -->
+            <div class="flex justify-center gap-3 mb-8">
+                <button onclick="timerApp.setDuration(15)" class="px-5 py-2 rounded-2xl bg-white/5 border border-white/10 text-sm text-white/70 hover:bg-white/10 transition hover:border-white/30">15</button>
+                <button onclick="timerApp.setDuration(25)" class="px-5 py-2 rounded-2xl bg-white/10 border border-white/20 text-sm text-white font-bold shadow-[0_0_15px_rgba(255,255,255,0.1)]">25</button>
+                <button onclick="timerApp.setDuration(45)" class="px-5 py-2 rounded-2xl bg-white/5 border border-white/10 text-sm text-white/70 hover:bg-white/10 transition hover:border-white/30">45</button>
+                <button onclick="timerApp.customTime()" class="px-5 py-2 rounded-2xl bg-white/5 border border-white/10 text-sm text-white/70 hover:bg-white/10 transition">✏️</button>
+            </div>
+
+            <!-- زر البدء الكبير -->
+            <div class="flex justify-center items-center gap-6">
+                <button onclick="timerApp.reset()" class="w-14 h-14 rounded-full control-btn flex items-center justify-center text-white/60 hover:text-white">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                </button>
+                
+                <button onclick="timerApp.toggleTimer()" id="playPauseBtn" class="w-24 h-24 rounded-[30px] control-btn play-btn flex items-center justify-center text-3xl">
+                    <span id="playIcon" class="ml-1">▶</span>
+                </button>
+            </div>
+            
+            <!-- إحصائية صغيرة -->
+            <div class="mt-8 text-center">
+                <p class="text-[10px] text-white/30 tracking-wider">الجلسات المكتملة اليوم: <span id="sessionCount" class="text-white/60 font-bold">0</span></p>
+            </div>
+        </footer>
+
+        <!-- نافذة الانتهاء (Modal) -->
+        <div id="finishModal" class="absolute inset-0 bg-black/80 backdrop-blur-xl z-50 flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500">
+            <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-purple-500 to-blue-500 flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(167,139,250,0.5)]">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <h2 class="text-3xl font-bold text-white mb-2 font-tajawal">مذهل!</h2>
+            <p class="text-white/50 mb-8 text-center px-8 font-light">أكملت جلسة تركيز عميقة بنجاح.</p>
+            <button onclick="timerApp.reset()" class="px-8 py-4 rounded-full bg-white text-black font-bold text-lg hover:scale-105 transition shadow-lg">جلسة جديدة</button>
+        </div>
+
+        <!-- نافذة إدخال الوقت المخصص (Modal) -->
+        <div id="customTimeModal" class="absolute inset-0 bg-black/90 backdrop-blur-md z-50 flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+            <h3 class="text-xl text-white font-tajawal mb-6">مدة التركيز (دقائق)</h3>
+            <input type="number" id="customMinutesInput" class="bg-white/10 border border-white/20 rounded-2xl px-6 py-4 text-white text-center text-4xl mb-8 w-40 font-mono focus:outline-none focus:border-purple-500 focus:bg-white/20 transition-colors" placeholder="00" min="1" max="180">
+            <div class="flex gap-4">
+                <button onclick="timerApp.confirmCustomTime()" class="px-8 py-3 bg-purple-600 hover:bg-purple-500 rounded-xl text-white font-bold transition-colors">بدء</button>
+                <button onclick="timerApp.closeCustomModal()" class="px-8 py-3 bg-white/10 hover:bg-white/20 rounded-xl text-white/70 transition-colors">إلغاء</button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        class GlassTimer {
+            constructor() {
+                this.duration = 25 * 60;
+                this.currentTime = 25 * 60;
+                this.interval = null;
+                this.isRunning = false;
+                this.sessions = 0;
+                
+                // SVG Circle Math
+                this.circle = document.getElementById('progressCircle');
+                this.radius = this.circle.r.baseVal.valueInSpecifiedUnits / 100 * 150; // Approximated
+                this.circumference = 2 * Math.PI * 145; // r approx in pixels based on viewBox
+                // Resetting strokeDasharray to generic 1000 for simplicity in CSS handling or dynamic:
+                this.circle.style.strokeDasharray = `1000 1000`; // Simplify for the specific SVG sizing
+                
+                this.ui = {
+                    display: document.getElementById('timerDisplay'),
+                    status: document.getElementById('statusText'),
+                    app: document.getElementById('appInterface'),
+                    btnIcon: document.getElementById('playIcon'),
+                    modal: document.getElementById('finishModal'),
+                    sessions: document.getElementById('sessionCount'),
+                    // Custom time elements
+                    customModal: document.getElementById('customTimeModal'),
+                    customInput: document.getElementById('customMinutesInput')
+                };
+
+                this.renderTime();
+            }
+
+            toggleTimer() {
+                if (this.isRunning) {
+                    this.pause();
+                } else {
+                    this.start();
+                }
+            }
+
+            start() {
+                if (this.currentTime <= 0) return;
+                
+                this.isRunning = true;
+                this.ui.app.classList.add('zen-mode'); // تفعيل وضع الزن
+                this.ui.status.innerText = "أنت في منطقة التركيز";
+                this.ui.status.style.opacity = "0.5";
+                this.ui.btnIcon.innerText = "⏸";
+                
+                this.interval = setInterval(() => {
+                    this.tick();
+                }, 1000);
+            }
+
+            pause() {
+                this.isRunning = false;
+                clearInterval(this.interval);
+                this.ui.app.classList.remove('zen-mode'); // إلغاء وضع الزن
+                this.ui.status.innerText = "مؤقت مؤقتاً";
+                this.ui.status.style.opacity = "1";
+                this.ui.btnIcon.innerText = "▶";
+            }
+
+            tick() {
+                if (this.currentTime > 0) {
+                    this.currentTime--;
+                    this.renderTime();
+                } else {
+                    this.complete();
+                }
+            }
+
+            renderTime() {
+                const mins = Math.floor(this.currentTime / 60);
+                const secs = this.currentTime % 60;
+                this.ui.display.innerText = `${mins < 10 ? '0'+mins : mins}:${secs < 10 ? '0'+secs : secs}`;
+                
+                // Progress Bar
+                const percent = this.currentTime / this.duration;
+                // SVG dashoffset logic: 0 is full, 1000 is empty
+                const offset = 1000 - (percent * 1000);
+                this.circle.style.strokeDashoffset = offset;
+            }
+
+            setDuration(mins) {
+                this.pause();
+                this.duration = mins * 60;
+                this.currentTime = this.duration;
+                this.renderTime();
+                this.ui.status.innerText = "جاهز للتركيز";
+            }
+
+            // --- Custom Time Handling ---
+            customTime() {
+                this.ui.customInput.value = "";
+                this.ui.customModal.style.opacity = "1";
+                this.ui.customModal.style.pointerEvents = "all";
+                setTimeout(() => this.ui.customInput.focus(), 100);
+            }
+
+            closeCustomModal() {
+                this.ui.customModal.style.opacity = "0";
+                this.ui.customModal.style.pointerEvents = "none";
+            }
+
+            confirmCustomTime() {
+                const val = parseInt(this.ui.customInput.value);
+                if (val && !isNaN(val) && val > 0) {
+                    this.setDuration(val);
+                    this.closeCustomModal();
+                } else {
+                    this.ui.customInput.classList.add('border-red-500');
+                    setTimeout(() => this.ui.customInput.classList.remove('border-red-500'), 500);
+                }
+            }
+
+            reset() {
+                this.pause();
+                this.currentTime = this.duration;
+                this.renderTime();
+                this.ui.modal.style.opacity = "0";
+                this.ui.modal.style.pointerEvents = "none";
+            }
+
+            complete() {
+                this.pause();
+                this.sessions++;
+                this.ui.sessions.innerText = this.sessions;
+                
+                // Show Modal
+                this.ui.modal.style.opacity = "1";
+                this.ui.modal.style.pointerEvents = "all";
+            }
+        }
+
+        const timerApp = new GlassTimer();
+        
+        // Listen for Enter key in custom input
+        document.getElementById('customMinutesInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                timerApp.confirmCustomTime();
+            }
+        });
+
+    </script>
+</body>
+</html>

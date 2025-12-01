@@ -28,7 +28,9 @@
             background-color: var(--primary-bg);
             font-family: 'Tajawal', sans-serif;
             color: var(--text-primary);
-            height: 100vh;
+            height: 100dvh; 
+            margin: 0;
+            padding: 0;
             overflow: hidden;
             display: flex;
             justify-content: center;
@@ -68,13 +70,14 @@
         .glass-card {
             width: 100%;
             height: 100%;
-            max-width: 450px;
-            max-height: 850px; /* لشاشات الكمبيوتر */
+            border-radius: 0;
+            border: none;
+            
             background: var(--glass-surface);
             backdrop-filter: blur(40px) saturate(180%);
             -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            box-shadow: none;
+            
             position: relative;
             z-index: 10;
             display: flex;
@@ -85,15 +88,20 @@
 
         @media (min-width: 768px) {
             .glass-card {
+                width: 100%;
+                max-width: 450px;
                 height: 90vh;
+                max-height: 850px;
                 border-radius: 48px;
+                border: 1px solid var(--glass-border);
+                box-shadow: 0 20px 40px rgba(0,0,0,0.4);
             }
         }
 
         /* --- التايبوغرافيا الرقمية --- */
         .timer-font {
             font-family: 'Outfit', sans-serif;
-            font-weight: 100; /* نحيف جداً */
+            font-weight: 100;
             letter-spacing: -2px;
             line-height: 1;
             font-variant-numeric: tabular-nums;
@@ -112,12 +120,18 @@
             backdrop-filter: blur(10px);
         }
         .control-btn:active {
-            transform: scale(0.92);
-            background: rgba(255,255,255,0.05);
+            transform: scale(0.98);
         }
-        .play-btn {
-            box-shadow: 0 0 30px rgba(167, 139, 250, 0.2);
-            border: 1px solid rgba(167, 139, 250, 0.4);
+        
+        /* زر البدء الجديد العريض */
+        .action-btn-main {
+            background: linear-gradient(90deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
+            box-shadow: 0 0 30px rgba(167, 139, 250, 0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .action-btn-main:hover {
+            background: linear-gradient(90deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+            box-shadow: 0 0 40px rgba(167, 139, 250, 0.25);
         }
         
         /* --- وضع الزن (إخفاء العناصر) --- */
@@ -140,11 +154,17 @@
             transform-origin: 50% 50%;
         }
         
-        /* Custom Input Styles */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
             -webkit-appearance: none; 
             margin: 0; 
+        }
+
+        .timer-container {
+            width: 85vw;
+            height: 85vw;
+            max-width: 320px;
+            max-height: 320px;
         }
 
     </style>
@@ -160,29 +180,25 @@
     <!-- واجهة التطبيق -->
     <main class="glass-card transition-ui" id="appInterface">
         
-        <!-- الرأس: الشعار والوضع (تمت إزالة زر الثيم) -->
-        <header class="p-8 flex justify-between items-center hide-in-zen transition-ui">
+        <!-- الرأس -->
+        <header class="p-6 md:p-8 flex justify-between items-center hide-in-zen transition-ui">
             <div class="flex items-center gap-2">
                 <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
                 <span class="text-xs font-bold tracking-[0.2em] text-white/50 uppercase">Offline Mode</span>
             </div>
-            <!-- تم إزالة زر تغيير الثيم -->
         </header>
 
         <!-- المنطقة الوسطى: المؤقت -->
         <section class="flex-1 flex flex-col items-center justify-center relative scale-in-zen transition-ui">
             
-            <!-- حاوية الساعة والدائرة -->
-            <div class="relative w-[320px] h-[320px] flex items-center justify-center">
+            <div class="timer-container relative flex items-center justify-center">
                 
-                <!-- دائرة الخلفية والخلفية المتوهجة -->
                 <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-purple-500/10 to-blue-500/5 blur-3xl"></div>
                 
-                <svg class="w-full h-full absolute top-0 left-0 drop-shadow-[0_0_15px_rgba(167,139,250,0.3)]">
-                    <circle cx="50%" cy="50%" r="48%" stroke="rgba(255,255,255,0.05)" stroke-width="2" fill="none" />
-                    <circle id="progressCircle" cx="50%" cy="50%" r="48%" stroke="url(#gradientStroke)" stroke-width="3" fill="none" 
-                            stroke-dasharray="1000" stroke-dashoffset="0" stroke-linecap="round" class="progress-circle" />
-                    
+                <svg class="w-full h-full absolute top-0 left-0 drop-shadow-[0_0_15px_rgba(167,139,250,0.3)]" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+                    <circle cx="50" cy="50" r="45" stroke="rgba(255,255,255,0.05)" stroke-width="2" fill="none" />
+                    <circle id="progressCircle" cx="50" cy="50" r="45" stroke="url(#gradientStroke)" stroke-width="3" fill="none" 
+                            stroke-dasharray="283" stroke-dashoffset="0" stroke-linecap="round" class="progress-circle" />
                     <defs>
                         <linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="100%">
                             <stop offset="0%" stop-color="#c084fc" />
@@ -191,44 +207,44 @@
                     </defs>
                 </svg>
 
-                <!-- الوقت -->
                 <div class="flex flex-col items-center z-10">
-                    <div id="timerDisplay" class="timer-font text-8xl md:text-9xl cursor-pointer" onclick="timerApp.toggleTimer()">25:00</div>
-                    <div id="statusText" class="text-white/40 text-sm font-medium tracking-widest mt-2 uppercase transition-opacity duration-500">جاهز للتركيز</div>
+                    <div id="timerDisplay" class="timer-font text-7xl md:text-9xl cursor-pointer" onclick="timerApp.toggleTimer()">25:00</div>
+                    <div id="statusText" class="text-white/40 text-xs md:text-sm font-medium tracking-widest mt-2 uppercase transition-opacity duration-500">جاهز للتركيز</div>
                 </div>
             </div>
 
         </section>
 
-        <!-- التحكم السفلي -->
-        <footer class="p-8 pb-12 transition-ui hide-in-zen">
+        <!-- التحكم السفلي الجديد -->
+        <footer class="p-6 pb-12 md:p-8 md:pb-16 transition-ui hide-in-zen w-full flex flex-col gap-6 items-center">
             
             <!-- أزرار المدة -->
-            <div class="flex justify-center gap-3 mb-8">
-                <button onclick="timerApp.setDuration(15)" class="px-5 py-2 rounded-2xl bg-white/5 border border-white/10 text-sm text-white/70 hover:bg-white/10 transition hover:border-white/30">15</button>
-                <button onclick="timerApp.setDuration(25)" class="px-5 py-2 rounded-2xl bg-white/10 border border-white/20 text-sm text-white font-bold shadow-[0_0_15px_rgba(255,255,255,0.1)]">25</button>
-                <button onclick="timerApp.setDuration(45)" class="px-5 py-2 rounded-2xl bg-white/5 border border-white/10 text-sm text-white/70 hover:bg-white/10 transition hover:border-white/30">45</button>
-                <button onclick="timerApp.customTime()" class="px-5 py-2 rounded-2xl bg-white/5 border border-white/10 text-sm text-white/70 hover:bg-white/10 transition">✏️</button>
+            <div class="flex justify-center gap-2 md:gap-3 w-full max-w-sm px-2">
+                <button onclick="timerApp.setDuration(15)" class="flex-1 py-3 rounded-2xl bg-white/5 border border-white/10 text-sm text-white/70 hover:bg-white/10 transition">15</button>
+                <button onclick="timerApp.setDuration(25)" class="flex-1 py-3 rounded-2xl bg-white/10 border border-white/20 text-sm text-white font-bold shadow-[0_0_15px_rgba(255,255,255,0.05)]">25</button>
+                <button onclick="timerApp.setDuration(45)" class="flex-1 py-3 rounded-2xl bg-white/5 border border-white/10 text-sm text-white/70 hover:bg-white/10 transition">45</button>
+                <button onclick="timerApp.customTime()" class="flex-1 py-3 rounded-2xl bg-white/5 border border-white/10 text-sm text-white/70 hover:bg-white/10 transition">✏️</button>
             </div>
 
-            <!-- زر البدء الكبير -->
-            <div class="flex justify-center items-center gap-6">
-                <button onclick="timerApp.reset()" class="w-14 h-14 rounded-full control-btn flex items-center justify-center text-white/60 hover:text-white">
-                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                </button>
+            <!-- حاوية الأزرار الرئيسية -->
+            <div class="w-full max-w-xs flex flex-col gap-3">
                 
-                <button onclick="timerApp.toggleTimer()" id="playPauseBtn" class="w-24 h-24 rounded-[30px] control-btn play-btn flex items-center justify-center text-3xl">
-                    <span id="playIcon" class="ml-1">▶</span>
+                <!-- زر البدء العريض الجديد -->
+                <button onclick="timerApp.toggleTimer()" id="playPauseBtn" class="w-full h-16 rounded-full action-btn-main backdrop-blur-md flex items-center justify-center gap-3 transition-all group">
+                    <span id="playIcon" class="text-2xl transition-transform group-hover:scale-110 relative top-[1px]">▶</span>
+                    <span id="playText" class="text-lg font-medium tracking-wide">ابدأ التركيز</span>
+                </button>
+
+                <!-- زر إعادة الضبط الثانوي -->
+                <button onclick="timerApp.reset()" class="text-white/30 hover:text-white/60 text-xs flex items-center justify-center gap-2 py-2 transition-colors">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    <span>إعادة ضبط المؤقت</span>
                 </button>
             </div>
             
-            <!-- إحصائية صغيرة -->
-            <div class="mt-8 text-center">
-                <p class="text-[10px] text-white/30 tracking-wider">الجلسات المكتملة اليوم: <span id="sessionCount" class="text-white/60 font-bold">0</span></p>
-            </div>
         </footer>
 
-        <!-- نافذة الانتهاء (Modal) -->
+        <!-- النوافذ المنبثقة (Modals) -->
         <div id="finishModal" class="absolute inset-0 bg-black/80 backdrop-blur-xl z-50 flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500">
             <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-purple-500 to-blue-500 flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(167,139,250,0.5)]">
                 <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
@@ -238,7 +254,6 @@
             <button onclick="timerApp.reset()" class="px-8 py-4 rounded-full bg-white text-black font-bold text-lg hover:scale-105 transition shadow-lg">جلسة جديدة</button>
         </div>
 
-        <!-- نافذة إدخال الوقت المخصص (Modal) -->
         <div id="customTimeModal" class="absolute inset-0 bg-black/90 backdrop-blur-md z-50 flex flex-col items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
             <h3 class="text-xl text-white font-tajawal mb-6">مدة التركيز (دقائق)</h3>
             <input type="number" id="customMinutesInput" class="bg-white/10 border border-white/20 rounded-2xl px-6 py-4 text-white text-center text-4xl mb-8 w-40 font-mono focus:outline-none focus:border-purple-500 focus:bg-white/20 transition-colors" placeholder="00" min="1" max="180">
@@ -257,23 +272,19 @@
                 this.currentTime = 25 * 60;
                 this.interval = null;
                 this.isRunning = false;
-                this.sessions = 0;
+                this.FULL_DASH_ARRAY = 283;
                 
-                // SVG Circle Math
                 this.circle = document.getElementById('progressCircle');
-                this.radius = this.circle.r.baseVal.valueInSpecifiedUnits / 100 * 150; // Approximated
-                this.circumference = 2 * Math.PI * 145; // r approx in pixels based on viewBox
-                // Resetting strokeDasharray to generic 1000 for simplicity in CSS handling or dynamic:
-                this.circle.style.strokeDasharray = `1000 1000`; // Simplify for the specific SVG sizing
+                this.circle.style.strokeDasharray = `${this.FULL_DASH_ARRAY} ${this.FULL_DASH_ARRAY}`;
+                this.circle.style.strokeDashoffset = "0";
                 
                 this.ui = {
                     display: document.getElementById('timerDisplay'),
                     status: document.getElementById('statusText'),
                     app: document.getElementById('appInterface'),
                     btnIcon: document.getElementById('playIcon'),
+                    btnText: document.getElementById('playText'),
                     modal: document.getElementById('finishModal'),
-                    sessions: document.getElementById('sessionCount'),
-                    // Custom time elements
                     customModal: document.getElementById('customTimeModal'),
                     customInput: document.getElementById('customMinutesInput')
                 };
@@ -293,10 +304,13 @@
                 if (this.currentTime <= 0) return;
                 
                 this.isRunning = true;
-                this.ui.app.classList.add('zen-mode'); // تفعيل وضع الزن
+                this.ui.app.classList.add('zen-mode'); 
                 this.ui.status.innerText = "أنت في منطقة التركيز";
                 this.ui.status.style.opacity = "0.5";
+                
+                // تحديث الزر
                 this.ui.btnIcon.innerText = "⏸";
+                this.ui.btnText.innerText = "إيقاف مؤقت";
                 
                 this.interval = setInterval(() => {
                     this.tick();
@@ -306,10 +320,13 @@
             pause() {
                 this.isRunning = false;
                 clearInterval(this.interval);
-                this.ui.app.classList.remove('zen-mode'); // إلغاء وضع الزن
+                this.ui.app.classList.remove('zen-mode');
                 this.ui.status.innerText = "مؤقت مؤقتاً";
                 this.ui.status.style.opacity = "1";
+                
+                // تحديث الزر
                 this.ui.btnIcon.innerText = "▶";
+                this.ui.btnText.innerText = "استئناف التركيز";
             }
 
             tick() {
@@ -326,10 +343,8 @@
                 const secs = this.currentTime % 60;
                 this.ui.display.innerText = `${mins < 10 ? '0'+mins : mins}:${secs < 10 ? '0'+secs : secs}`;
                 
-                // Progress Bar
                 const percent = this.currentTime / this.duration;
-                // SVG dashoffset logic: 0 is full, 1000 is empty
-                const offset = 1000 - (percent * 1000);
+                const offset = this.FULL_DASH_ARRAY - (percent * this.FULL_DASH_ARRAY);
                 this.circle.style.strokeDashoffset = offset;
             }
 
@@ -339,9 +354,9 @@
                 this.currentTime = this.duration;
                 this.renderTime();
                 this.ui.status.innerText = "جاهز للتركيز";
+                this.ui.btnText.innerText = "ابدأ التركيز";
             }
 
-            // --- Custom Time Handling ---
             customTime() {
                 this.ui.customInput.value = "";
                 this.ui.customModal.style.opacity = "1";
@@ -371,14 +386,12 @@
                 this.renderTime();
                 this.ui.modal.style.opacity = "0";
                 this.ui.modal.style.pointerEvents = "none";
+                this.ui.btnText.innerText = "ابدأ التركيز";
+                this.ui.status.innerText = "جاهز للتركيز";
             }
 
             complete() {
                 this.pause();
-                this.sessions++;
-                this.ui.sessions.innerText = this.sessions;
-                
-                // Show Modal
                 this.ui.modal.style.opacity = "1";
                 this.ui.modal.style.pointerEvents = "all";
             }
@@ -386,7 +399,6 @@
 
         const timerApp = new GlassTimer();
         
-        // Listen for Enter key in custom input
         document.getElementById('customMinutesInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 timerApp.confirmCustomTime();

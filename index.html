@@ -29,11 +29,17 @@
             color: var(--text-primary);
             /* استخدام dvh للتعامل مع أشرطة المتصفح المتحركة */
             height: 100dvh;
-            width: 100vw;
+            width: 100%; /* استخدام 100% بدلاً من 100vw لتجنب مشاكل التمرير الأفقي */
             margin: 0;
             padding: 0;
             overflow: hidden;
             position: relative;
+            
+            /* --- التعديل الجوهري: تفعيل التوسيط المرن لجميع الشاشات --- */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         /* --- خلفية الأورورا الحية --- */
@@ -83,7 +89,6 @@
             flex-direction: column;
             
             /* التعامل مع المناطق الآمنة (Safe Areas) */
-            /* نستخدم max لضمان وجود مسافة حتى لو لم يكن هناك notch */
             padding-top: max(20px, env(safe-area-inset-top));
             padding-bottom: max(20px, env(safe-area-inset-bottom));
             padding-left: max(16px, env(safe-area-inset-left));
@@ -94,11 +99,8 @@
 
         /* تحسينات للشاشات الكبيرة */
         @media (min-width: 768px) {
-            body {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
+            /* تم نقل خصائص Flex الخاصة بـ body إلى القاعدة العامة بالأعلى لضمان التوسيط دائماً */
+            
             .glass-card {
                 width: 100%;
                 max-width: 450px;
@@ -115,6 +117,9 @@
         /* --- توزيع العناصر (Layout Fixes) --- */
         header {
             flex-shrink: 0; /* منع الانكماش */
+            display: flex;
+            justify-content: space-between; /* ضمان التوزيع الصحيح */
+            align-items: center;
         }
         
         .timer-section {
@@ -124,11 +129,15 @@
             justify-content: center;
             align-items: center;
             width: 100%;
+            text-align: center; /* ضمان توسيط النصوص */
         }
 
         footer {
             flex-shrink: 0; /* منع الانكماش */
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* توسيط محتويات الفوتر */
         }
 
         /* --- التايبوغرافيا والعناصر --- */
@@ -190,6 +199,9 @@
             width: min(85vw, 320px);
             height: min(85vw, 320px);
             position: relative;
+            /* ضمان التوسيط الذاتي */
+            margin-left: auto;
+            margin-right: auto;
         }
 
     </style>
@@ -206,8 +218,9 @@
     <main class="glass-card transition-ui" id="appInterface">
         
         <!-- الرأس -->
-        <header class="flex justify-between items-center hide-in-zen w-full px-2 pt-2">
-            <div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full backdrop-blur-md border border-white/5">
+        <header class="hide-in-zen w-full px-2 pt-2">
+            <!-- استخدام w-full مع justify-between في الستايل يضمن التوزيع -->
+            <div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full backdrop-blur-md border border-white/5 mx-auto md:mx-0">
                 <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_#ef4444]"></div>
                 <span class="text-[10px] font-bold tracking-[0.15em] text-white/70 uppercase font-outfit">Offline Mode</span>
             </div>
